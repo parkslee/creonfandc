@@ -91,14 +91,6 @@
 
         }
 
-        .result-section {
-
-            margin-top: 10px;
-
-            font-size: 16px;
-
-        }
-
         .step-by-step {
 
             margin-top: 20px;
@@ -125,15 +117,11 @@
 
         <h1>Creon Calculator</h1>
 
-        <p>Enter the amounts of carbohydrates, fats, and protein (in grams) to calculate the required Creon capsules.</p>
+        <p>Enter the total calories of your meal to calculate the required Creon capsules.</p>
 
 
 
-        <input type="number" id="carbs" placeholder="Enter carbohydrates (grams)" />
-
-        <input type="number" id="fats" placeholder="Enter fats (grams)" />
-
-        <input type="number" id="protein" placeholder="Enter protein (grams)" />
+        <input type="number" id="calories" placeholder="Enter total calories" />
 
         <button onclick="calculateCreon()">Calculate Creon Capsules</button>
 
@@ -151,25 +139,41 @@
 
         function calculateCreon() {
 
-            const carbs = parseFloat(document.getElementById('carbs').value);
-
-            const fats = parseFloat(document.getElementById('fats').value);
-
-            const protein = parseFloat(document.getElementById('protein').value);
+            const calories = parseFloat(document.getElementById('calories').value);
 
 
 
-            // Ensure valid inputs
+            // Ensure valid input
 
-            if (isNaN(carbs) || carbs < 0 || isNaN(fats) || fats < 0 || isNaN(protein) || protein < 0) {
+            if (isNaN(calories) || calories <= 0) {
 
-                document.getElementById('result').innerText = 'Please enter valid numbers for all fields.';
+                document.getElementById('result').innerText = 'Please enter a valid number for calories.';
 
                 document.getElementById('step-by-step').innerText = '';
 
                 return;
 
             }
+
+
+
+            // Macronutrient distribution (assumes typical distribution)
+
+            const carbPercentage = 50;   // 50% of calories from carbs
+
+            const fatPercentage = 30;    // 30% of calories from fat
+
+            const proteinPercentage = 20; // 20% of calories from protein
+
+
+
+            // Calories per gram
+
+            const caloriesPerGramCarb = 4;
+
+            const caloriesPerGramFat = 9;
+
+            const caloriesPerGramProtein = 4;
 
 
 
@@ -193,13 +197,23 @@
 
 
 
+            // Calculate grams of macronutrients
+
+            const gramsCarbs = (calories * carbPercentage / 100) / caloriesPerGramCarb;
+
+            const gramsFat = (calories * fatPercentage / 100) / caloriesPerGramFat;
+
+            const gramsProtein = (calories * proteinPercentage / 100) / caloriesPerGramProtein;
+
+
+
             // Calculate enzyme requirements
 
-            const amylaseNeeded = carbs * amylasePerGramCarb;
+            const amylaseNeeded = gramsCarbs * amylasePerGramCarb;
 
-            const lipaseNeeded = fats * lipasePerGramFat;
+            const lipaseNeeded = gramsFat * lipasePerGramFat;
 
-            const proteaseNeeded = protein * proteasePerGramProtein;
+            const proteaseNeeded = gramsProtein * proteasePerGramProtein;
 
 
 
@@ -239,31 +253,31 @@
 
                 <u>Carbohydrates:</u><br>
 
-                - Carbohydrates entered: ${carbs}g<br>
+                - ${carbPercentage}% of calories = ${(calories * carbPercentage / 100).toFixed(2)} kcal<br>
 
-                - Amylase needed: ${carbs} × 10,000 = ${amylaseNeeded} IU<br>
+                - Grams of carbs: ${(calories * carbPercentage / 100 / caloriesPerGramCarb).toFixed(2)}g<br>
 
-                - Capsules required for carbohydrates: ${amylaseNeeded} ÷ 18,000 = ${capsulesForAmylase.toFixed(2)} → Rounded up: ${roundedCapsulesForAmylase} capsule(s)<br><br>
+                - Amylase needed: ${amylaseNeeded.toFixed(2)} IU → Capsules: ${capsulesForAmylase.toFixed(2)} → Rounded up: ${roundedCapsulesForAmylase} capsule(s)<br><br>
 
 
 
                 <u>Fats:</u><br>
 
-                - Fats entered: ${fats}g<br>
+                - ${fatPercentage}% of calories = ${(calories * fatPercentage / 100).toFixed(2)} kcal<br>
 
-                - Lipase needed: ${fats} × 2,000 = ${lipaseNeeded} IU<br>
+                - Grams of fat: ${(calories * fatPercentage / 100 / caloriesPerGramFat).toFixed(2)}g<br>
 
-                - Capsules required for fats: ${lipaseNeeded} ÷ 25,000 = ${capsulesForLipase.toFixed(2)} → Rounded up: ${roundedCapsulesForLipase} capsule(s)<br><br>
+                - Lipase needed: ${lipaseNeeded.toFixed(2)} IU → Capsules: ${capsulesForLipase.toFixed(2)} → Rounded up: ${roundedCapsulesForLipase} capsule(s)<br><br>
 
 
 
                 <u>Protein:</u><br>
 
-                - Protein entered: ${protein}g<br>
+                - ${proteinPercentage}% of calories = ${(calories * proteinPercentage / 100).toFixed(2)} kcal<br>
 
-                - Protease needed: ${protein} × 4,000 = ${proteaseNeeded} IU<br>
+                - Grams of protein: ${(calories * proteinPercentage / 100 / caloriesPerGramProtein).toFixed(2)}g<br>
 
-                - Capsules required for protein: ${proteaseNeeded} ÷ 1,000 = ${capsulesForProtease.toFixed(2)} → Rounded up: ${roundedCapsulesForProtease} capsule(s)
+                - Protease needed: ${proteaseNeeded.toFixed(2)} IU → Capsules: ${capsulesForProtease.toFixed(2)} → Rounded up: ${roundedCapsulesForProtease} capsule(s)
 
             `;
 
