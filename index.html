@@ -99,6 +99,20 @@
 
         }
 
+        .summary {
+
+            margin-top: 20px;
+
+            font-size: 14px;
+
+            color: #555;
+
+            text-align: left;
+
+            line-height: 1.6;
+
+        }
+
     </style>
 
 </head>
@@ -111,11 +125,15 @@
 
         <h1>Creon Calculator</h1>
 
-        <p>Enter your total calories to calculate how many Creon 25,000 capsules are needed for fat and carbohydrates.</p>
+        <p>Enter the amounts of carbohydrates, fats, and protein (in grams) to calculate the required Creon capsules.</p>
 
 
 
-        <input type="number" id="calories" placeholder="Enter total calories" />
+        <input type="number" id="carbs" placeholder="Enter carbohydrates (grams)" />
+
+        <input type="number" id="fats" placeholder="Enter fats (grams)" />
+
+        <input type="number" id="protein" placeholder="Enter protein (grams)" />
 
         <button onclick="calculateCreon()">Calculate Creon Capsules</button>
 
@@ -123,9 +141,7 @@
 
         <div class="result" id="result"></div>
 
-        <div id="result-fat" class="result-section"></div>
-
-        <div id="result-carbs" class="result-section"></div>
+        <div id="result-summary" class="summary"></div>
 
     </div>
 
@@ -135,19 +151,21 @@
 
         function calculateCreon() {
 
-            const calories = parseFloat(document.getElementById('calories').value);
+            const carbs = parseFloat(document.getElementById('carbs').value);
+
+            const fats = parseFloat(document.getElementById('fats').value);
+
+            const protein = parseFloat(document.getElementById('protein').value);
 
 
 
-            // Ensure valid input
+            // Ensure valid inputs
 
-            if (isNaN(calories) || calories <= 0) {
+            if (isNaN(carbs) || carbs < 0 || isNaN(fats) || fats < 0 || isNaN(protein) || protein < 0) {
 
-                document.getElementById('result').innerText = 'Please enter a valid number of calories.';
+                document.getElementById('result').innerText = 'Please enter valid numbers for all fields.';
 
-                document.getElementById('result-fat').innerText = '';
-
-                document.getElementById('result-carbs').innerText = '';
+                document.getElementById('result-summary').innerText = '';
 
                 return;
 
@@ -155,69 +173,77 @@
 
 
 
-            // Constants for calculations
-
-            const carbRatio = 0.40;
-
-            const fatRatio = 0.60;
-
-            const carbsPerGram = 4;
-
-            const fatPerGram = 9;
-
-            const lipasePerGramFat = 2000;
-
-            const amylasePerGramCarb = 10000;
-
-
-
-            // Conversion of calories to grams
-
-            const carbsGrams = (calories * carbRatio) / carbsPerGram;
-
-            const fatsGrams = (calories * fatRatio) / fatPerGram;
-
-
-
             // Enzyme requirements
 
-            const lipaseNeeded = fatsGrams * lipasePerGramFat;
+            const amylasePerGramCarb = 10000; // IU for carbohydrates
 
-            const amylaseNeeded = carbsGrams * amylasePerGramCarb;
+            const lipasePerGramFat = 2000;    // IU for fats
+
+            const proteasePerGramProtein = 4000; // IU for protein
 
 
 
             // Creon capsule content
 
-            const lipasePerCapsule = 25000;
+            const lipasePerCapsule = 25000;   // IU
 
-            const amylasePerCapsule = 18000;
+            const amylasePerCapsule = 18000; // IU
+
+            const proteasePerCapsule = 1000; // IU
 
 
 
-            // Calculate the number of capsules required
+            // Calculate enzyme requirements
 
-            const capsulesForLipase = lipaseNeeded / lipasePerCapsule;
+            const amylaseNeeded = carbs * amylasePerGramCarb;
+
+            const lipaseNeeded = fats * lipasePerGramFat;
+
+            const proteaseNeeded = protein * proteasePerGramProtein;
+
+
+
+            // Calculate number of capsules required
 
             const capsulesForAmylase = amylaseNeeded / amylasePerCapsule;
 
+            const capsulesForLipase = lipaseNeeded / lipasePerCapsule;
+
+            const capsulesForProtease = proteaseNeeded / proteasePerCapsule;
 
 
-            // Round up to the nearest whole number for both
 
-            const roundedCapsulesForLipase = Math.ceil(capsulesForLipase);
+            // Round up to the nearest whole number for each
 
             const roundedCapsulesForAmylase = Math.ceil(capsulesForAmylase);
 
+            const roundedCapsulesForLipase = Math.ceil(capsulesForLipase);
+
+            const roundedCapsulesForProtease = Math.ceil(capsulesForProtease);
 
 
-            // Display the results separately
 
-            document.getElementById('result').innerText = `You need Creon 25,000 capsules for the following:`;
+            // Total capsules required
 
-            document.getElementById('result-fat').innerText = `For Fat (60% of calories): ${roundedCapsulesForLipase} capsule(s)`;
+            const totalCapsules = roundedCapsulesForAmylase + roundedCapsulesForLipase + roundedCapsulesForProtease;
 
-            document.getElementById('result-carbs').innerText = `For Carbohydrates (40% of calories): ${roundedCapsulesForAmylase} capsule(s)`;
+
+
+            // Display the results
+
+            document.getElementById('result').innerText = `Total Creon 25,000 capsules required: ${totalCapsules}`;
+
+            document.getElementById('result-summary').innerHTML = `
+
+                <strong>Calculation Details:</strong><br>
+
+                Carbohydrates: ${carbs}g → ${amylaseNeeded} IU of amylase → ${roundedCapsulesForAmylase} capsule(s)<br>
+
+                Fats: ${fats}g → ${lipaseNeeded} IU of lipase → ${roundedCapsulesForLipase} capsule(s)<br>
+
+                Protein: ${protein}g → ${proteaseNeeded} IU of protease → ${roundedCapsulesForProtease} capsule(s)<br>
+
+            `;
 
         }
 
@@ -226,5 +252,5 @@
 
 
 </body>
-			
+
 </html>
