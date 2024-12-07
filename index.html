@@ -245,7 +245,7 @@
 
             // Display the results
 
-            document.getElementById('result').innerText = `Total Creon 25,000 capsules required: ${totalCapsules}`;
+            document.getElementById('result').innerText = `Total Creon 25,000 capsules required: ${capsulesForAmylase.toFixed(2)}`;
 
             document.getElementById('step-by-step').innerHTML = `
 
@@ -271,7 +271,7 @@
 
 
 
-                <u>Protein:(disregard due to there not being enough protease in creon - possible reason for continued loose stools and flatulence)</u><br>
+                <u>Protein (not included in total):(disregard due to there not being enough protease in creon - possible reason for continued loose stools and flatulence)</u><br>
 
                 - ${proteinPercentage}% of calories = ${(calories * proteinPercentage / 100).toFixed(2)} kcal<br>
 
